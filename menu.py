@@ -1,11 +1,19 @@
 from tkinter import *
 import tkinter as tk
- 
+from PIL import Image, ImageTk
 root = Tk()
 root.title("Крестики/Нолики")
 root.geometry("450x600") 
-root["bg"] = "gray22"
 
+#Указал путь к изображению
+backgrount_image = ImageTk.PhotoImage(Image.open("image/image.jpg"))
+
+# Создаем Label и устанавливаем фон
+def labeel(backgrount_image):
+    backgrount_label = tk.Label(root, image=backgrount_image)
+    backgrount_label.place(x=0, y=0)
+
+labeel(backgrount_image)
 
 
 # Глобальные переменные для хранения состояния игры
@@ -38,6 +46,9 @@ def start_game():
     # Очистка существующих виджетов 
     for widget in root.winfo_children():
         widget.destroy()
+
+    # Создаем Label и устанавливаем фон
+    labeel(backgrount_image)
 
     # Метка для отображения очереди хода
     global current_player_label
