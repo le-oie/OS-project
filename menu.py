@@ -24,7 +24,7 @@ def button_click(button_number):
     buttons_state[button_number - 1] = current_player
 
     # Обновляем текст кнопки
-    buttons[button_number - 1].configure(text=current_player, font = ('Arial', 20))
+    buttons[button_number - 1].configure(text=current_player, font = ('Arial', 40), text_color='#978fad')
 
     # Меняем игрока
     current_player = "O" if current_player == "X" else "X"
@@ -56,7 +56,7 @@ def start_game():
         for j in range(3):
             button_number = i * 3 + j + 1  # Номер кнопки
             button = ctk.CTkButton(root, text="", fg_color='#2c2933', hover_color='#434049' , command=lambda num=button_number: button_click(num), 
-                               width=100, height=100)  # Устанавливаем размеры кнопок
+                               width=100, height=100, corner_radius=30)  # Устанавливаем размеры кнопок
             # Вычисление координат для размещения кнопки
             x = j * (button_width + spacing_x) + spacing_x
             y = (i * (button_height + spacing_y) + spacing_y) + 60  # Учитываем высоту метки
