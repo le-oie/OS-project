@@ -1,25 +1,11 @@
 from tkinter import *
-import tkinter as tk
-from PIL import Image, ImageTk
+import customtkinter as ctk
+
 root = Tk()
 root.title("Крестики/Нолики")
-root.geometry("450x600") 
+root.geometry("450x600")
+root.configure(background='#17141e')
 
-#Указал путь к изображению
-backgrount_image = ImageTk.PhotoImage(Image.open("image/image.jpg"))
-
-# Создаем Label и устанавливаем фон
-def labeel(backgrount_image):
-    backgrount_label = tk.Label(root, image=backgrount_image)
-    backgrount_label.place(x=0, y=0)
-
-labeel(backgrount_image)
-
-
-# Глобальные переменные для хранения состояния игры
-current_player = "X"  # Начинаем с крестиков
-buttons_state = [None] * 9  # Состояние кнопок (None означает, что кнопка не нажата)
-buttons = []  # Список для хранения всех кнопок
 
 # Функция, которая вызывается при нажатии на кнопку
 def button_click(button_number):
@@ -31,33 +17,52 @@ def button_click(button_number):
 
     # Обновляем состояние кнопки
     buttons_state[button_number - 1] = current_player
+    buttons[button_number - 1].configure(text=current_player, font=('Arial', 20))
 
-    # Обновляем текст кнопки
-    buttons[button_number - 1].config(text=current_player)
+    winner = check_winner()
+    if winner:
+        show_result(f"Победитель: {winner}")
+    elif None not in buttons_state:
+        show_result("      Ничья!      ")
+    else:
+        current_player = "O" if current_player == "X" else "X"
+        current_player_label.configure(text=f"Ход: {current_player}")
 
-    # Меняем игрока
-    current_player = "O" if current_player == "X" else "X"
 
-    # Обновляем метку с текущим ходом
-    current_player_label.config(text=f"Ход: {current_player}")
+def check_winner():
+    win_conditions = [(0, 1, 2), (3, 4, 5), (6, 7, 8),
+                     (0, 3, 6), (1, 4, 7), (2, 5, 8),
+                     (0, 4, 8), (2, 4, 6)]
+    for condition in win_conditions:
+        if buttons_state[condition[0]] == buttons_state[condition[1]] == buttons_state[condition[2]] is not None:
+            return buttons_state[condition[0]]
+    return None
 
-# Функция для очистки окна и создания 9 новых кнопок
+
+def show_result(message):
+    result_label = ctk.CTkLabel(root, text=message, font=("Arial", 30), fg_color='#3d319e', text_color='white', corner_radius=10)
+    result_label.place(x=115, y=100)
+
+    restart_button = ctk.CTkButton(root, text="Начать заново", command=start_game, width=300, height=50, corner_radius=10)
+    restart_button.place(x=80, y=435)
+
+
 def start_game():
-    # Очистка существующих виджетов 
+    global current_player, buttons_state, buttons
+
+    # Глобальные переменные для хранения состояния игры
+    buttons_state = [None] * 9  # Сброс состояния кнопок
+    buttons = []  # Сброс списка кнопок
+    current_player = "X"  # Начинаем с крестиков
+
+    # Очистка существующих виджетов
     for widget in root.winfo_children():
         widget.destroy()
 
-    # Создаем Label и устанавливаем фон
-    labeel(backgrount_image)
-
-    # Метка для отображения очереди хода
     global current_player_label
-    current_player_label = tk.Label(root, text=f"Ход: {current_player}", font=("Arial", 16))
-    current_player_label.place(x=150, y=20)  # Размещаем метку вверху
+    current_player_label = ctk.CTkLabel(root, text=f"Ход: {current_player}", font=("Arial", 40), fg_color='#3d319e', text_color='white', corner_radius=10)
+    current_player_label.place(x=150, y=20)
 
-    # Создаем 9 кнопок в сетке 3x3
-    global buttons  # Эта переменная будет использоваться для хранения кнопок
-    buttons = []  # Сбрасываем список кнопок
     button_width = 150
     button_height = 60
     spacing_x = (500 - (button_width * 3)) // 4  # Горизонтальные промежутки
@@ -66,8 +71,8 @@ def start_game():
     for i in range(3):
         for j in range(3):
             button_number = i * 3 + j + 1  # Номер кнопки
-            button = tk.Button(root, text="", command=lambda num=button_number: button_click(num),
-                               width=8, height=3)  # Устанавливаем размеры кнопок
+            button = ctk.CTkButton(root, text="", fg_color='#2c2933', hover_color='#434049',
+                                   command=lambda num=button_number: button_click(num), width=100, height=100)
             # Вычисление координат для размещения кнопки
             x = j * (button_width + spacing_x) + spacing_x
             y = (i * (button_height + spacing_y) + spacing_y) + 60  # Учитываем высоту метки
@@ -75,20 +80,8 @@ def start_game():
             buttons.append(button)  # Добавляем кнопку в список
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-button = tk.Button(root, text="Начать игру", command=start_game, bg= 'blue')
-button.config(width=50, height=30, )
+button = ctk.CTkButton(root, text="Начать игру", command=start_game, font=("ARIAL", 16), fg_color='#2c2933', hover_color='#434049')
+button.configure(width=300, height=50)
 button.pack(anchor=CENTER, expand=1)
- 
+
 root.mainloop()
